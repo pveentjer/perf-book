@@ -22,7 +22,7 @@ $$
 $$
 In real implementations, pipelining introduces several constraints that limit the ideal model shown above. Pipeline hazards prevent the ideal pipeline behavior, resulting in stalls. The three classes of hazards are structural hazards, data hazards, and control hazards. Luckily for the programmer, in modern CPUs, all classes of hazards are handled by the hardware.
 
-* **Structural hazards**: are caused by resource conflicts. To a large extent, they could be eliminated by replicating the hardware resources, such as using multi-ported registers or memories. However, eliminating all such hazards could potentially become quite expensive in terms of silicon area and power.
+* **Structural hazards**: are caused by resource conflicts (would contention not be a better name?). To a large extent, they could be eliminated by replicating the hardware resources, such as using multi-ported registers or memories. However, eliminating all such hazards could potentially become quite expensive in terms of silicon area and power.
 
 * **Data hazards**: are caused by data dependencies in the program and are classified into three types:
 
@@ -45,6 +45,8 @@ In real implementations, pipelining introduces several constraints that limit th
   There is a WAR dependency for register R0. Since we have a large pool of physical registers, we can simply rename all the occurrences of `R0` register starting from the write operation and below. Once we have eliminated a WAR hazard by renaming register `R0`, we can safely execute the two operations in any order.
 
   A *write-after-write* (WAW) hazard requires a dependent write to execute after a write. It occurs when instruction `x+1` writes a source before instruction `x` writes to the source, resulting in the wrong order of writes. WAW hazards are also eliminated by register renaming, allowing both writes to execute in any order while preserving the correct final result.
+
+  Note: Perhaps a note about store buffers? When an instruction is allocated on the reorder buffer (ROB) and that instruction is a store, a slot is allocated in the store buffer. Since instructions are allocated in the ROB in program order (PO), slots are allocated in the store buffer in program order. Stores can be performed out of order, but stores will retire and be committed into the coherent cache in order. This will guarantee that 
 
 * **Control hazards**: are caused due to changes in the program flow. They arise from pipelining branches and other instructions that change the program flow. The branch condition that determines the direction of the branch (taken vs. not-taken) is resolved in the execute pipeline stage. As a result, the fetch of the next instruction cannot be pipelined unless the control hazard is eliminated. Techniques such as dynamic branch prediction and speculative execution described in the next section are used to overcome control hazards.
 
